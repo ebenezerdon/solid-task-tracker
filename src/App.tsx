@@ -1,34 +1,42 @@
-import { createSignal, For } from 'solid-js'
-import type { Component, Accessor, Setter } from 'solid-js'
+import { For } from 'solid-js'
+import { createStore } from 'solid-js/store'
+import type { Component } from 'solid-js'
 
 const App: Component = () => {
   type Task = {
+    id: string
     text: string
-    completed: Accessor<boolean>
-    setCompleted: Setter<boolean>
+    completed: boolean
   }
 
-  const [taskList, setTaskList] = createSignal([] as Task[])
+  const [taskList, setTaskList] = createStore([] as Task[])
 
   const addTask = (e: Event) => {
     e.preventDefault()
-    const [completed, setCompleted] = createSignal(false)
 
     const taskInput = document.querySelector('#taskInput') as HTMLInputElement
 
     const newTask: Task = {
+      id: Math.random().toString(36).substring(2),
       text: taskInput.value,
-      completed,
-      setCompleted,
+      completed: false,
     }
 
-    setTaskList([newTask, ...taskList()])
+    setTaskList([newTask, ...taskList])
 
     taskInput.value = ''
   }
 
   const deleteTask = (task: Task) => {
-    setTaskList(taskList().filter((item) => item !== task))
+    setTaskList(taskList.filter((item) => item !== task))
+  }
+
+  const toggleStatus = (taskId: string) => {
+    setTaskList(
+      (task) => task.id === taskId,
+      'completed',
+      (completed) => !completed,
+    )
   }
 
   return (
@@ -45,19 +53,21 @@ const App: Component = () => {
 
       <div>
         <h4 class="text-muted mb-4">Tasks</h4>
-        <For each={taskList()}>
+        <For each={taskList}>
           {(task: Task) => (
             <div class="row row-cols-3 mb-3 justify-content-center">
               <button class="btn btn-danger w-auto" onClick={() => deleteTask(task)}>
                 X
               </button>
-              <div class={`bg-light p-2 mx-2 ${task.completed() && 'text-decoration-line-through'}`}>{task.text}</div>
+              <div class={`bg-light p-2 mx-2 ${task.completed && 'text-decoration-line-through'}`}>{task.text}</div>
               <input
                 type="checkbox"
-                checked={task.completed()}
+                checked={task.completed}
                 role="button"
                 class="form-check-input h-auto px-3"
-                onClick={() => task.setCompleted(!task.completed())}
+                onClick={() => {
+                  toggleStatus(task.id)
+                }}
               />
             </div>
           )}
