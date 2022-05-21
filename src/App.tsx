@@ -23,8 +23,8 @@ const App: Component = () => {
 
         <div class="row row-cols-3 mb-3 justify-content-center">
           <button class="btn btn-danger w-auto">X</button>
-          <div class="bg-light p-2 mx-2">Write technical article</div>
-          <input type="checkbox" role="button" class="form-check-input h-auto px-3" />
+          <div class="bg-light p-2 mx-2 text-decoration-line-through">Write technical article</div>
+          <input type="checkbox" checked role="button" class="form-check-input h-auto px-3" />
         </div>
 
         <div class="row row-cols-3 mb-3 justify-content-center">
