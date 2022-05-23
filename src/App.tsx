@@ -59,7 +59,9 @@ const App: Component = () => {
               <button class="btn btn-danger w-auto" onClick={() => deleteTask(task)}>
                 X
               </button>
-              <div class={`bg-light p-2 mx-2 ${task.completed && 'text-decoration-line-through'}`}>{task.text}</div>
+              <div class={`bg-light p-2 mx-2 ${task.completed && 'text-decoration-line-through text-success'}`}>
+                {task.text}
+              </div>
               <input
                 type="checkbox"
                 checked={task.completed}
