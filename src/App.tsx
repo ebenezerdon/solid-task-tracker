@@ -1,4 +1,4 @@
-import { For } from 'solid-js'
+import { createSignal, For } from 'solid-js'
 import { createStore } from 'solid-js/store'
 import type { Component } from 'solid-js'
 
@@ -38,6 +38,10 @@ const App: Component = () => {
       (completed) => !completed,
     )
   }
+
+  // const [count, setCount] = createSignal(0)
+  // const increment = () => setCount(count() + 1)
+  // setInterval(increment, 1000)
 
   return (
     <div class="container mt-5 text-center">
