@@ -1,5 +1,4 @@
 import { createSignal, For } from 'solid-js'
-import { createStore } from 'solid-js/store'
 import type { Component } from 'solid-js'
 
 const App: Component = () => {
@@ -9,7 +8,7 @@ const App: Component = () => {
     completed: boolean
   }
 
-  const [taskList, setTaskList] = createStore([] as Task[])
+  const [taskList, setTaskList] = createSignal([] as Task[])
 
   const addTask = (e: Event) => {
     e.preventDefault()
@@ -22,45 +21,45 @@ const App: Component = () => {
       completed: false,
     }
 
-    setTaskList([newTask, ...taskList])
+    setTaskList([newTask, ...taskList()])
 
     taskInput.value = ''
   }
 
-  const deleteTask = (task: Task) => {
-    setTaskList(taskList.filter((item) => item !== task))
+  const deleteTask = (taskId: string) => {
+    const newTaskList = taskList().filter((task) => task.id !== taskId)
+    setTaskList(newTaskList)
   }
 
   const toggleStatus = (taskId: string) => {
-    setTaskList(
-      (task) => task.id === taskId,
-      'completed',
-      (completed) => !completed,
-    )
-  }
+    const newTaskList = taskList().map((task) => {
+      if (task.id === taskId) {
+        return { ...task, completed: !task.completed }
+      }
 
-  // const [count, setCount] = createSignal(0)
-  // const increment = () => setCount(count() + 1)
-  // setInterval(increment, 1000)
+      return task
+    })
+    setTaskList(newTaskList)
+  }
 
   return (
     <div class="container mt-5 text-center">
       <h1 class="mb-4">Whattodo!</h1>
 
-      <form class="mb-5 row row-cols-2 justify-content-center">
+      <form class="mb-5 row row-cols-2 justify-content-center" onSubmit={(e) => addTask(e)}>
         <input type="text" class="input-group-text p-1 w-25" placeholder="Add task here..." id="taskInput" required />
 
-        <button class="btn btn-primary ms-3 w-auto" type="submit" onclick={(e) => addTask(e)}>
+        <button class="btn btn-primary ms-3 w-auto" type="submit">
           Add task
         </button>
       </form>
 
       <div>
         <h4 class="text-muted mb-4">Tasks</h4>
-        <For each={taskList}>
+        <For each={taskList()}>
           {(task: Task) => (
             <div class="row row-cols-3 mb-3 justify-content-center">
-              <button class="btn btn-danger w-auto" onClick={() => deleteTask(task)}>
+              <button class="btn btn-danger w-auto" onclick={() => deleteTask(task.id)}>
                 X
               </button>
               <div class={`bg-light p-2 mx-2 ${task.completed && 'text-decoration-line-through text-success'}`}>
